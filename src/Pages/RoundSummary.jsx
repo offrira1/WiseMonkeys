@@ -2,16 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Team, Game } from "../Entities/index.jsx";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations } from "../data/translations";
+import LanguageToggle from "../Components/LanguageToggle";
 
 export default function RoundSummary() {
   console.log("🎯 RoundSummary component loaded");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { language, isHebrew } = useLanguage();
+  const common = translations[language].common;
+  const t = translations[language].roundSummary;
+  
   const gameId = searchParams.get('gameId');
   const teamId = searchParams.get('teamId');
   const score = parseInt(searchParams.get('score') || '0');
   const correct = searchParams.get('correct');
   const skips = searchParams.get('skips');
+  const usedWords = searchParams.get('usedWords') ? JSON.parse(decodeURIComponent(searchParams.get('usedWords'))) : [];
+  const skippedWords = searchParams.get('skippedWords') ? JSON.parse(decodeURIComponent(searchParams.get('skippedWords'))) : [];
   
   console.log("📋 RoundSummary params:", { gameId, teamId, score, correct, skips });
   
@@ -105,10 +114,10 @@ export default function RoundSummary() {
   if (!game || teams.length === 0) {
     console.log("⏳ Showing loading state. Game:", !!game, "Teams:", teams.length);
     return (
-      <div className="round-summary-page">
+      <div className="round-summary-page" dir={isHebrew ? "rtl" : "ltr"}>
         <div className="loading-container">
           <div className="loading-text">
-            טוען סיכום הסיבוב...
+            {t.loading}
             <br />
             <small>Game: {game ? '✅' : '❌'} | Teams: {teams.length}</small>
             <br />
@@ -123,28 +132,90 @@ export default function RoundSummary() {
 
   console.log("🎨 Rendering RoundSummary with data:", { game: !!game, teams: teams.length, currentTeamIndex });
   
+  // Calculate average hints used
+  const averageHints = usedWords.length > 0 
+    ? (usedWords.reduce((sum, word) => sum + (word.hintsUsed || 0), 0) / usedWords.length).toFixed(1)
+    : 0;
+
   return (
-    <div className="round-summary-page" dir="rtl">
+    <div className="round-summary-page" dir={isHebrew ? "rtl" : "ltr"}>
       <div className="round-summary-container">
+        {/* Language Toggle */}
+        <div className="language-toggle-container">
+          <LanguageToggle />
+        </div>
+
         {/* Score Display */}
         <div className="score-display-card">
-          <h1 className="page-title">סיכום סיבוב ומספר הנקודות</h1>
-          <p className="page-subtitle">תוצאות הסיבוב הנוכחי</p>
+          <h1 className="page-title">{t.title}</h1>
+          <p className="page-subtitle">{t.subtitle}</p>
           <div className="score-number">{score}</div>
-          <div className="score-label">נקודות</div>
+          <div className="score-label">{t.points}</div>
           <div className="score-details">
             <div className="score-item">
-              <span className="score-item-label">ניחושים נכונים:</span>
+              <span className="score-item-label">{t.correctGuesses}:</span>
               <span className="score-item-value">{correct}</span>
             </div>
             <div className="score-item">
-              <span className="score-item-label">דילוגים:</span>
+              <span className="score-item-label">{t.skips}:</span>
               <span className="score-item-value">{skips}</span>
             </div>
           </div>
           <div className="round-info">
-            סיבוב מספר {game?.current_round || 1} קבוצה {currentTeamIndex + 1} מ {teams.length}
+            {t.roundInfo} {game?.current_round || 1} {t.team} {currentTeamIndex + 1} {t.of} {teams.length}
           </div>
+        </div>
+
+        {/* Word Details */}
+        <div className="word-details-card">
+          <h2 className="word-details-title">{t.wordDetails}</h2>
+          
+          {/* Guessed Words */}
+          <div className="words-section">
+            <h3 className="words-section-title">{t.guessedWords} ({usedWords.length})</h3>
+            {usedWords.length > 0 ? (
+              <div className="words-list">
+                {usedWords.map((word, index) => (
+                  <div key={index} className="word-item">
+                    <div className="word-text">{word.text}</div>
+                    <div className="word-stats">
+                      <span className="hints-used">{t.hintsUsed}: {word.hintsUsed || 0}</span>
+                      <span className="word-score">{t.score}: {word.score || 0}</span>
+                    </div>
+                  </div>
+                ))}
+                <div className="words-summary">
+                  <div className="summary-item">
+                    <span className="summary-label">{t.totalScore}:</span>
+                    <span className="summary-value">{usedWords.reduce((sum, word) => sum + (word.score || 0), 0)}</span>
+                  </div>
+                  <div className="summary-item">
+                    <span className="summary-label">{t.averageHints}:</span>
+                    <span className="summary-value">{averageHints}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="no-words">{t.noWords}</div>
+            )}
+          </div>
+
+          {/* Skipped Words */}
+          {skippedWords.length > 0 && (
+            <div className="words-section">
+              <h3 className="words-section-title">{t.skippedWords} ({skippedWords.length})</h3>
+              <div className="words-list">
+                {skippedWords.map((word, index) => (
+                  <div key={index} className="word-item skipped">
+                    <div className="word-text">{word.text}</div>
+                    <div className="word-stats">
+                      <span className="skipped-label">{t.skips}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -153,26 +224,26 @@ export default function RoundSummary() {
             <>
               {isLastTeam ? (
                 <button onClick={handleContinue} className="continue-button">
-                  המשך לסיבוב הבא
+                  {t.continueNextRound}
                 </button>
               ) : (
                 <button onClick={handleContinue} className="continue-button">
-                  המשך לקבוצה הבאה
+                  {t.continueNextTeam}
                 </button>
               )}
               
               <button onClick={handleFinishGame} className="finish-button">
-                סיים משחק
+                {t.finishGame}
               </button>
             </>
           ) : (
             <button onClick={handleFinishGame} className="finish-button">
-              סיום המשחק
+              {t.endGame}
             </button>
           )}
           
           <button onClick={handleHome} className="home-button">
-            חזרה לתפריט הראשי
+            {t.backToHome}
           </button>
         </div>
       </div>

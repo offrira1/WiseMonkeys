@@ -241,6 +241,33 @@ export const translations = {
       backToHome: "חזרה לתפריט הראשי"
     },
 
+    // Round Summary
+    roundSummary: {
+      loading: "טוען סיכום הסיבוב...",
+      title: "סיכום סיבוב ומספר הנקודות",
+      subtitle: "תוצאות הסיבוב הנוכחי",
+      points: "נקודות",
+      correctGuesses: "ניחושים נכונים",
+      skips: "דילוגים",
+      roundInfo: "סיבוב מספר",
+      team: "קבוצה",
+      of: "מ",
+      continueNextRound: "המשך לסיבוב הבא",
+      continueNextTeam: "המשך לקבוצה הבאה",
+      finishGame: "סיים משחק",
+      endGame: "סיום המשחק",
+      backToHome: "חזרה לתפריט הראשי",
+      wordDetails: "פירוט המילים",
+      guessedWords: "מילים שניחשו",
+      skippedWords: "מילים שדילגו",
+      hintsUsed: "רמזים",
+      word: "מילה",
+      score: "ניקוד",
+      noWords: "אין מילים",
+      totalScore: "ניקוד כולל",
+      averageHints: "ממוצע רמזים"
+    },
+
     // New Game
     newGame: {
       gameSettings: "הגדרות משחק",
@@ -531,6 +558,33 @@ export const translations = {
       mvpPlayers: "Outstanding Players",
       newGame: "New Game",
       backToHome: "Back to Home"
+    },
+
+    // Round Summary
+    roundSummary: {
+      loading: "Loading round summary...",
+      title: "Round Summary and Score",
+      subtitle: "Current Round Results",
+      points: "points",
+      correctGuesses: "Correct Guesses",
+      skips: "Skips",
+      roundInfo: "Round",
+      team: "Team",
+      of: "of",
+      continueNextRound: "Continue to Next Round",
+      continueNextTeam: "Continue to Next Team",
+      finishGame: "Finish Game",
+      endGame: "End Game",
+      backToHome: "Back to Home",
+      wordDetails: "Word Details",
+      guessedWords: "Guessed Words",
+      skippedWords: "Skipped Words",
+      hintsUsed: "Hints",
+      word: "Word",
+      score: "Score",
+      noWords: "No words",
+      totalScore: "Total Score",
+      averageHints: "Average Hints"
     },
 
     // New Game

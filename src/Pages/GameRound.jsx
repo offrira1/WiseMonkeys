@@ -29,6 +29,7 @@ export default function GameRound() {
   const [team, setTeam] = useState(null);
   const [game, setGame] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
+  const [skippedWords, setSkippedWords] = useState([]);
   const [currentPlayers, setCurrentPlayers] = useState({});
   const [showHintCounter, setShowHintCounter] = useState(false);
   const [pendingWord, setPendingWord] = useState("");
@@ -127,13 +128,16 @@ export default function GameRound() {
         ]
       });
       
-      const summaryUrl = createPageUrl("RoundSummary") + `?gameId=${gameId}&teamId=${teamId}&score=${roundScore}&correct=${correctGuesses}&skips=${skips}`;
+      const summaryUrl = createPageUrl("RoundSummary") + 
+        `?gameId=${gameId}&teamId=${teamId}&score=${roundScore}&correct=${correctGuesses}&skips=${skips}` +
+        `&usedWords=${encodeURIComponent(JSON.stringify(usedWords))}` +
+        `&skippedWords=${encodeURIComponent(JSON.stringify(skippedWords))}`;
       console.log("🚀 Navigating to:", summaryUrl);
       navigate(summaryUrl);
     } catch (error) {
       console.error("❌ Error ending round:", error);
     }
-  }, [teamId, gameId, team, roundScore, correctGuesses, skips, usedWords, navigate, game]);
+  }, [teamId, gameId, team, roundScore, correctGuesses, skips, usedWords, skippedWords, navigate, game]);
 
   useEffect(() => {
     let interval = null;
@@ -149,17 +153,18 @@ export default function GameRound() {
 
   const handleAction = async (isCorrect) => {
     const wordToMarkAsUsed = currentWord;
-    const newUsedWords = [...usedWords, wordToMarkAsUsed];
-    setUsedWords(newUsedWords);
     
     if (isCorrect) {
         // Show hint counter modal for correct guesses
         setPendingWord(wordToMarkAsUsed);
         setShowHintCounter(true);
     } else {
+        // Track skipped word
+        const newSkippedWords = [...skippedWords, { text: wordToMarkAsUsed, score: -1 }];
+        setSkippedWords(newSkippedWords);
         setRoundScore(s => s - 1);
         setSkips(s => s + 1);
-        await getNextWord(newUsedWords);
+        await getNextWord(usedWords);
     }
   };
 
@@ -167,9 +172,19 @@ export default function GameRound() {
     const score = calculateScore(hintCount);
     setRoundScore(s => s + score);
     setCorrectGuesses(c => c + 1);
+    
+    // Track the word with hint information
+    const wordWithHints = {
+      text: pendingWord,
+      hintsUsed: hintCount,
+      score: score
+    };
+    const newUsedWords = [...usedWords, wordWithHints];
+    setUsedWords(newUsedWords);
+    
     setShowHintCounter(false);
     setPendingWord("");
-    await getNextWord(usedWords);
+    await getNextWord(newUsedWords);
   };
 
   const startRound = () => {

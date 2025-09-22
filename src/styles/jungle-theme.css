@@ -5759,14 +5759,176 @@ body {
     top: 15px;
     right: 15px;
   }
-  
+
   .lang-btn {
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   .lang-btn .lang-icon {
     font-size: 14px;
+  }
+}
+
+/* Round Summary Word Details Styles */
+.word-details-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.word-details-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.words-section {
+  margin-bottom: 25px;
+}
+
+.words-section:last-child {
+  margin-bottom: 0;
+}
+
+.words-section-title {
+  color: #FFD700;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.words-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.word-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.word-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.word-item.skipped {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.word-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.word-stats {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.hints-used, .word-score, .skipped-label {
+  color: #FFD700;
+  font-size: 14px;
+  font-weight: 500;
+  background: rgba(255, 215, 0, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.skipped-label {
+  color: #FF6B6B;
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.words-summary {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.summary-label {
+  color: #FFD700;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.summary-value {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.no-words {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Responsive adjustments for word details */
+@media (max-width: 768px) {
+  .word-details-card {
+    padding: 20px;
+    margin: 15px 0;
+  }
+  
+  .word-details-title {
+    font-size: 20px;
+  }
+  
+  .words-section-title {
+    font-size: 16px;
+  }
+  
+  .word-item {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .word-stats {
+    justify-content: center;
+  }
+  
+  .words-summary {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
