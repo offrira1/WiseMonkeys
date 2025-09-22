@@ -2,11 +2,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Game, Team } from "../Entities/index.jsx";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations } from "../data/translations";
+import LanguageToggle from "../components/LanguageToggle";
 
 export default function NewGame() {
   const navigate = useNavigate();
+  const { language, isHebrew } = useLanguage();
+  const common = translations[language].common;
+  const t = translations[language].newGame;
+  
   const [teams, setTeams] = useState([
-    { id: 1, name: "קבוצה 1", players: ["", "", ""] }
+    { id: 1, name: isHebrew ? "קבוצה 1" : "Team 1", players: ["", "", ""] }
   ]);
   const [timer, setTimer] = useState(60);
   const [cardBackground, setCardBackground] = useState(null);
@@ -15,7 +22,7 @@ export default function NewGame() {
     if (teams.length < 4) {
       const newTeam = {
         id: teams.length + 1,
-        name: `קבוצה ${teams.length + 1}`,
+        name: isHebrew ? `קבוצה ${teams.length + 1}` : `Team ${teams.length + 1}`,
         players: ["", "", ""]
       };
       setTeams([...teams, newTeam]);
@@ -112,24 +119,27 @@ export default function NewGame() {
   };
 
   return (
-    <div className="new-game-page" dir="rtl">
+    <div className="new-game-page" dir={isHebrew ? "rtl" : "ltr"}>
       <div className="new-game-container">
-
+        {/* Language Toggle */}
+        <div className="language-toggle-container">
+          <LanguageToggle />
+        </div>
 
         {/* Game Settings */}
         <div className="game-settings-card">
           <div className="card-header">
-            <h2 className="card-title">הגדרות משחק</h2>
+            <h2 className="card-title">{t.gameSettings}</h2>
           </div>
           <div className="card-content">
             <div className="timer-section">
               <div className="timer-header">
                 <div className="timer-info">
-                  <h3 className="timer-title">זמן לכל סיבוב</h3>
-                  <p className="timer-desc">בחר כמה זמן יהיה לכל קבוצה לנחש מילים</p>
+                  <h3 className="timer-title">{t.timePerRound}</h3>
+                  <p className="timer-desc">{t.timeDescription}</p>
                 </div>
                 <div className="timer-display">
-                  {timer} שניות
+                  {timer} {t.seconds}
                 </div>
               </div>
               <select 
@@ -137,9 +147,9 @@ export default function NewGame() {
                 onChange={(e) => setTimer(parseInt(e.target.value))}
                 className="timer-select"
               >
-                <option value={60}>60 שניות - מהיר ⚡</option>
-                <option value={90}>90 שניות - בינוני 🎯</option>
-                <option value={120}>120 שניות - רגוע 🧘</option>
+                <option value={60}>{t.fast}</option>
+                <option value={90}>{t.medium}</option>
+                <option value={120}>{t.relaxed}</option>
               </select>
             </div>
           </div>
@@ -148,10 +158,10 @@ export default function NewGame() {
         {/* Teams */}
         <div className="teams-card">
           <div className="card-header">
-            <h2 className="card-title">קבוצות</h2>
+            <h2 className="card-title">{t.teams}</h2>
             {teams.length < 4 && (
               <button onClick={addTeam} className="add-team-btn">
-                + הוסף קבוצה
+                {t.addTeam}
               </button>
             )}
           </div>
@@ -166,7 +176,7 @@ export default function NewGame() {
                       value={team.name}
                       onChange={(e) => updateTeamName(team.id, e.target.value)}
                       className="team-name-input"
-                      placeholder="שם הקבוצה"
+                      placeholder={t.teamNamePlaceholder}
                     />
                   </div>
                   {teams.length > 1 && (
@@ -181,7 +191,7 @@ export default function NewGame() {
 
                 <div className="players-section">
                   <div className="players-header">
-                    <span className="players-label">שחקנים ({team.players.filter(p => p.trim() !== "").length}/6)</span>
+                    <span className="players-label">{isHebrew ? 'שחקנים' : 'Players'} ({team.players.filter(p => p.trim() !== "").length}/6)</span>
                     {team.players.length < 6 && (
                       <button 
                         onClick={() => addPlayer(team.id)} 
@@ -198,7 +208,7 @@ export default function NewGame() {
                         type="text"
                         value={player}
                         onChange={(e) => updatePlayer(team.id, playerIndex, e.target.value)}
-                        placeholder={`שחקן ${playerIndex + 1}`}
+                        placeholder={t.playerPlaceholder}
                         className="player-input"
                       />
                       {team.players.length > 3 && (
@@ -224,10 +234,10 @@ export default function NewGame() {
             disabled={!canStartGame()}
             className="start-button"
           >
-            🎮 התחל משחק
+            🎮 {t.startGame}
           </button>
           <button onClick={goHome} className="back-button">
-            ← חזרה לתפריט הראשי
+            ← {t.backToHome}
           </button>
         </div>
       </div>

@@ -1,30 +1,96 @@
-import { hebrewWords, bananaCards } from './words.js';
+import { hebrewWords, engWords, hebrewBananaCards, englishBananaCards } from './words.js';
 
 class GameData {
   constructor() {
     this.initializeStorage();
   }
 
-  initializeStorage() {
-    // Initialize words if not exists
-    if (!localStorage.getItem('gameWords')) {
-      const words = hebrewWords.map((word, index) => ({
-        id: `word_${index}`,
-        text: word,
-        difficulty: 'easy',
-        is_active: true
-      }));
-      localStorage.setItem('gameWords', JSON.stringify(words));
+  migrateOldData() {
+    // Check if old gameWords exists and migrate to new structure
+    const oldWords = localStorage.getItem('gameWords');
+    if (oldWords && !localStorage.getItem('hebrewWords')) {
+      try {
+        const words = JSON.parse(oldWords);
+        const hebrewWords = words.map((word, index) => ({
+          ...word,
+          id: `hebrew_word_${index}`,
+          language: 'hebrew'
+        }));
+        localStorage.setItem('hebrewWords', JSON.stringify(hebrewWords));
+        // Remove old data
+        localStorage.removeItem('gameWords');
+      } catch (error) {
+        console.error('Error migrating old words data:', error);
+      }
     }
 
-    // Initialize banana cards if not exists
-    if (!localStorage.getItem('bananaCards')) {
-      const cards = bananaCards.map((card, index) => ({
-        id: `card_${index}`,
-        text: card,
-        is_active: true
+    // Check if old bananaCards exists and migrate to new structure
+    const oldBananaCards = localStorage.getItem('bananaCards');
+    if (oldBananaCards && !localStorage.getItem('hebrewBananaCards')) {
+      try {
+        const cards = JSON.parse(oldBananaCards);
+        const hebrewCards = cards.map((card, index) => ({
+          ...card,
+          id: `hebrew_card_${index}`,
+          language: 'hebrew'
+        }));
+        localStorage.setItem('hebrewBananaCards', JSON.stringify(hebrewCards));
+        // Remove old data
+        localStorage.removeItem('bananaCards');
+      } catch (error) {
+        console.error('Error migrating old banana cards data:', error);
+      }
+    }
+  }
+
+  initializeStorage() {
+    // Migrate old data if exists
+    this.migrateOldData();
+
+    // Initialize Hebrew words if not exists
+    if (!localStorage.getItem('hebrewWords')) {
+      const words = hebrewWords.map((word, index) => ({
+        id: `hebrew_word_${index}`,
+        text: word,
+        difficulty: 'easy',
+        is_active: true,
+        language: 'hebrew'
       }));
-      localStorage.setItem('bananaCards', JSON.stringify(cards));
+      localStorage.setItem('hebrewWords', JSON.stringify(words));
+    }
+
+    // Initialize English words if not exists
+    if (!localStorage.getItem('englishWords')) {
+      const words = engWords.map((word, index) => ({
+        id: `english_word_${index}`,
+        text: word,
+        difficulty: 'easy',
+        is_active: true,
+        language: 'english'
+      }));
+      localStorage.setItem('englishWords', JSON.stringify(words));
+    }
+
+    // Initialize Hebrew banana cards if not exists
+    if (!localStorage.getItem('hebrewBananaCards')) {
+      const cards = hebrewBananaCards.map((card, index) => ({
+        id: `hebrew_card_${index}`,
+        text: card,
+        is_active: true,
+        language: 'hebrew'
+      }));
+      localStorage.setItem('hebrewBananaCards', JSON.stringify(cards));
+    }
+
+    // Initialize English banana cards if not exists
+    if (!localStorage.getItem('englishBananaCards')) {
+      const cards = englishBananaCards.map((card, index) => ({
+        id: `english_card_${index}`,
+        text: card,
+        is_active: true,
+        language: 'english'
+      }));
+      localStorage.setItem('englishBananaCards', JSON.stringify(cards));
     }
 
     // Initialize game settings if not exists
@@ -39,21 +105,56 @@ class GameData {
   }
 
   // Words management
-  getWords() {
-    return JSON.parse(localStorage.getItem('gameWords') || '[]');
+  getWords(language = 'hebrew') {
+    const key = language === 'hebrew' ? 'hebrewWords' : 'englishWords';
+    return JSON.parse(localStorage.getItem(key) || '[]');
   }
 
-  updateWords(words) {
-    localStorage.setItem('gameWords', JSON.stringify(words));
+  updateWords(words, language = 'hebrew') {
+    const key = language === 'hebrew' ? 'hebrewWords' : 'englishWords';
+    localStorage.setItem(key, JSON.stringify(words));
   }
 
   // Banana cards management
-  getBananaCards() {
-    return JSON.parse(localStorage.getItem('bananaCards') || '[]');
+  getBananaCards(language = 'hebrew') {
+    const key = language === 'hebrew' ? 'hebrewBananaCards' : 'englishBananaCards';
+    return JSON.parse(localStorage.getItem(key) || '[]');
   }
 
-  updateBananaCards(cards) {
-    localStorage.setItem('bananaCards', JSON.stringify(cards));
+  updateBananaCards(cards, language = 'hebrew') {
+    const key = language === 'hebrew' ? 'hebrewBananaCards' : 'englishBananaCards';
+    localStorage.setItem(key, JSON.stringify(cards));
+  }
+
+  // Force refresh words for current language
+  refreshWordsForLanguage(language = 'hebrew') {
+    const words = language === 'hebrew' ? hebrewWords : engWords;
+    const wordData = words.map((word, index) => ({
+      id: `${language}_word_${index}`,
+      text: word,
+      difficulty: 'easy',
+      is_active: true,
+      language: language
+    }));
+    this.updateWords(wordData, language);
+  }
+
+  // Debug method to check current words
+  debugCurrentWords(language = 'hebrew') {
+    const words = this.getWords(language);
+    console.log(`Current ${language} words:`, words.slice(0, 5)); // Show first 5 words
+    return words;
+  }
+
+  // Clear all word data and reinitialize
+  clearAllWordData() {
+    localStorage.removeItem('hebrewWords');
+    localStorage.removeItem('englishWords');
+    localStorage.removeItem('hebrewBananaCards');
+    localStorage.removeItem('englishBananaCards');
+    localStorage.removeItem('gameWords'); // Remove old data if exists
+    localStorage.removeItem('bananaCards'); // Remove old data if exists
+    this.initializeStorage();
   }
 
   // Game settings management

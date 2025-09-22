@@ -3,10 +3,17 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Game, Team } from "../Entities/index.jsx";
 import GameData from "../data/GameData.js";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations } from "../data/translations";
+import LanguageToggle from "../components/LanguageToggle";
 
 export default function RoleAssignment() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { language, isHebrew } = useLanguage();
+  const common = translations[language].common;
+  const t = translations[language].roleAssignment;
+  
   const gameId = searchParams.get('gameId');
   const teamIndex = parseInt(searchParams.get('teamIndex') || '0');
   
@@ -36,21 +43,30 @@ export default function RoleAssignment() {
     }
   };
 
-  const openBananaCard = () => {
-    const challenges = [
-      "נחש את המילה רק עם תנועות ידיים",
-      "נחש את המילה רק עם קולות של בעלי חיים",
-      "נחש את המילה רק עם ריקוד",
-      "נחש את המילה רק עם ציור באוויר",
-      "נחש את המילה רק עם תנועות פנים",
-      "נחש את המילה רק עם קולות של מכונות",
-      "נחש את המילה רק עם תנועות גוף",
-      "נחש את המילה רק עם קולות של טבע"
-    ];
-    
-    const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
-    setBananaCard({ text: randomChallenge });
-    setShowBananaCard(true);
+  const openBananaCard = async () => {
+    try {
+      const gameData = (await import('../data/GameData.js')).default;
+      const bananaCards = gameData.getBananaCards(language);
+      
+      if (bananaCards.length > 0) {
+        const randomChallenge = bananaCards[Math.floor(Math.random() * bananaCards.length)];
+        setBananaCard({ text: randomChallenge.text });
+        setShowBananaCard(true);
+      } else {
+        // Fallback to translation-based challenges
+        const challenges = t.bananaChallenges;
+        const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+        setBananaCard({ text: randomChallenge });
+        setShowBananaCard(true);
+      }
+    } catch (error) {
+      console.error("Error loading banana card:", error);
+      // Fallback to translation-based challenges
+      const challenges = t.bananaChallenges;
+      const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+      setBananaCard({ text: randomChallenge });
+      setShowBananaCard(true);
+    }
   };
 
   const closeBananaCard = () => {
@@ -99,43 +115,45 @@ export default function RoleAssignment() {
 
   if (!game || !currentTeam) {
     return (
-      <div className="role-assignment-page">
+      <div className="role-assignment-page" dir={isHebrew ? "rtl" : "ltr"}>
         <div className="loading-container">
-          <div className="loading-text">טוען...</div>
+          <div className="loading-text">{t.loading}</div>
         </div>
       </div>
     );
   }
 
-
-
   return (
-    <div className="role-assignment-page" dir="rtl">
+    <div className="role-assignment-page" dir={isHebrew ? "rtl" : "ltr"}>
       <div className="role-assignment-container">
+        {/* Language Toggle */}
+        <div className="language-toggle-container">
+          <LanguageToggle />
+        </div>
 
 
         {/* Role Assignment */}
         <div className="roles-card">
           <div className="card-header">
-            <h2 className="card-title">חלוקת תפקידים - {currentTeam.name}</h2>
+            <h2 className="card-title">{t.roleAssignment} - {currentTeam.name}</h2>
           </div>
           <div className="card-content">
             <div className="roles-grid">
               <div className="role-card">
                 <div className="role-monkey">🙈</div>
-                <h3 className="role-title">קוף שלא רואה</h3>
+                <h3 className="role-title">{t.monkeyNotSee}</h3>
                 <div className="player-name">{currentPlayers.guesser}</div>
-                <p className="role-desc">מנחש את המילה</p>
+                <p className="role-desc">{t.guessWord}</p>
               </div>
               <div className="role-card">
                 <div className="role-monkey">🙉</div>
-                <h3 className="role-title">קוף שלא שומע</h3>
+                <h3 className="role-title">{t.monkeyNotHear}</h3>
                 <div className="player-name">{currentPlayers.clueGiver}</div>
-                <p className="role-desc">נותן רמזים מילוליים</p>
+                <p className="role-desc">{t.giveClues}</p>
               </div>
               <div className="role-card">
                 <div className="role-monkey">🙊</div>
-                <h3 className="role-title">קופים שלא מדברים</h3>
+                <h3 className="role-title">{t.monkeysNotSpeak}</h3>
                 <div className="player-name">{currentPlayers.mime}</div>
                 {currentPlayers.additionalMimes.length > 0 && (
                   <div className="additional-mimes">
@@ -144,7 +162,7 @@ export default function RoleAssignment() {
                     ))}
                   </div>
                 )}
-                <p className="role-desc">עושים פנטומימה</p>
+                <p className="role-desc">{t.doPantomime}</p>
               </div>
             </div>
           </div>
@@ -153,7 +171,7 @@ export default function RoleAssignment() {
         {/* Game Options */}
         <div className="game-options-card">
           <div className="card-header">
-            <h2 className="card-title">אפשרויות משחק</h2>
+            <h2 className="card-title">{t.gameOptions}</h2>
           </div>
           <div className="card-content">
             <div className="options-row">
@@ -162,20 +180,20 @@ export default function RoleAssignment() {
                 {!showBananaCard ? (
                   <div className="banana-unopened">
                     <div className="banana-icon">🍌</div>
-                    <p className="banana-desc">קלף בננה</p>
+                    <p className="banana-desc">{t.bananaCard}</p>
                     <button onClick={openBananaCard} className="banana-button">
-                      פתח קלף
+                      {t.openCard}
                     </button>
                   </div>
                 ) : (
                   <div className="banana-opened">
                     <div className="banana-icon">🍌</div>
                     <div className="banana-challenge">
-                      <h3 className="challenge-title">אתגר:</h3>
+                      <h3 className="challenge-title">{t.challenge}</h3>
                       <p className="challenge-text">{bananaCard.text}</p>
                     </div>
                     <button onClick={closeBananaCard} className="close-banana">
-                      סגור
+                      {t.close}
                     </button>
                   </div>
                 )}
@@ -188,14 +206,14 @@ export default function RoleAssignment() {
               <div className="double-time-option">
                 <div className="double-time-container">
                   <div className="hourglass-icon">⏳</div>
-                  <p className="double-time-desc">זמן כפול</p>
+                  <p className="double-time-desc">{t.doubleTime}</p>
                   <label className="double-time-checkbox">
                     <input
                       type="checkbox"
                       checked={doubleTime}
                       onChange={(e) => setDoubleTime(e.target.checked)}
                     />
-                    <span className="checkbox-text">הפעל זמן כפול</span>
+                    <span className="checkbox-text">{t.enableDoubleTime}</span>
                   </label>
                 </div>
               </div>
@@ -206,10 +224,10 @@ export default function RoleAssignment() {
         {/* Action Buttons */}
         <div className="action-buttons">
           <button onClick={startRound} className="start-button">
-            התחל סיבוב!
+            {t.startRound}
           </button>
           <button onClick={goHome} className="back-button">
-            ← חזרה לתפריט הראשי
+            ← {t.backToHome}
           </button>
         </div>
       </div>

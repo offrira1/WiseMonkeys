@@ -5701,3 +5701,72 @@ body {
   }
 }
 
+/* Language Toggle Styles */
+.language-toggle-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.language-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-btn {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--text-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.lang-btn.active {
+  background: var(--text-accent);
+  color: var(--text-dark);
+  border-color: var(--text-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.lang-btn .current-lang {
+  font-weight: 700;
+}
+
+.lang-btn .lang-icon {
+  font-size: 16px;
+}
+
+/* Mobile Responsive for Language Toggle */
+@media (max-width: 768px) {
+  .language-toggle-container {
+    top: 15px;
+    right: 15px;
+  }
+  
+  .lang-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .lang-btn .lang-icon {
+    font-size: 14px;
+  }
+}
+

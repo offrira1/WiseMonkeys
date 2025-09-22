@@ -5,9 +5,11 @@ import { CheckCircle, X, Clock, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Word, Team, Game } from "../Entities/index.jsx";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function GamePlay({ gameId, teamId, doubleTime }) {
   const navigate = useNavigate();
+  const { isHebrew } = useLanguage();
   const [timeLeft, setTimeLeft] = useState(60);
   const [currentWord, setCurrentWord] = useState("");
   const [roundScore, setRoundScore] = useState(0);
@@ -25,7 +27,7 @@ export default function GamePlay({ gameId, teamId, doubleTime }) {
       const availableWords = allWords.filter(word => !currentUsedWords.includes(word.text));
       
       if (availableWords.length === 0) {
-        setCurrentWord("נגמרו המילים!");
+        setCurrentWord(isHebrew ? "נגמרו המילים!" : "No words left!");
         return "";
       }
       
@@ -35,7 +37,7 @@ export default function GamePlay({ gameId, teamId, doubleTime }) {
       return newWord;
     } catch (error) {
       console.error("Error getting next word:", error);
-      setCurrentWord("שגיאה בטעינת מילה");
+      setCurrentWord(isHebrew ? "שגיאה בטעינת מילה" : "Error loading word");
       return "";
     }
   }, []);

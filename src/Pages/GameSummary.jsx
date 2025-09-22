@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Team, Game } from "../Entities/index.jsx";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations } from "../data/translations";
+import LanguageToggle from "../components/LanguageToggle";
 
 // Confetti Component
 const Confetti = () => {
@@ -17,6 +20,10 @@ const Confetti = () => {
 export default function GameSummary() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { language, isHebrew } = useLanguage();
+  const common = translations[language].common;
+  const t = translations[language].gameSummary;
+  
   const gameId = searchParams.get('gameId');
   
   const [game, setGame] = useState(null);
@@ -133,9 +140,9 @@ export default function GameSummary() {
 
   if (!game || !gameStats) {
     return (
-      <div className="game-summary-page">
+      <div className="game-summary-page" dir={isHebrew ? "rtl" : "ltr"}>
         <div className="loading-container">
-          <div className="loading-text">טוען סיכום המשחק...</div>
+          <div className="loading-text">{t.loading}</div>
         </div>
       </div>
     );
@@ -144,48 +151,52 @@ export default function GameSummary() {
   const mvpPlayers = getMVPPlayers();
 
   return (
-    <div className="game-summary-page" dir="rtl">
+    <div className="game-summary-page" dir={isHebrew ? "rtl" : "ltr"}>
       <Confetti />
       <div className="game-summary-container">
+        {/* Language Toggle */}
+        <div className="language-toggle-container">
+          <LanguageToggle />
+        </div>
 
 
         {/* Winner Announcement */}
         <div className="winner-card">
-          <h2 className="winner-title">המנצחת הגדולה!</h2>
+          <h2 className="winner-title">{t.winner}</h2>
           <div className="winner-name">{gameStats.winningTeam.name}</div>
-          <div className="winner-score">{gameStats.winningTeam.score} נקודות</div>
+          <div className="winner-score">{gameStats.winningTeam.score} {t.points}</div>
         </div>
 
         {/* Game Statistics */}
         <div className="stats-card">
-          <h3 className="stats-title">סטטיסטיקות המשחק</h3>
+          <h3 className="stats-title">{t.gameStats}</h3>
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-icon">⏱️</div>
               <div className="stat-number">{gameStats.totalRounds}</div>
-              <div className="stat-label">סיבובים</div>
+              <div className="stat-label">{t.rounds}</div>
             </div>
             <div className="stat-item">
               <div className="stat-icon">🎯</div>
               <div className="stat-number">{gameStats.totalCorrect}</div>
-              <div className="stat-label">ניחושים נכונים</div>
+              <div className="stat-label">{t.correctGuesses}</div>
             </div>
             <div className="stat-item">
               <div className="stat-icon">📝</div>
               <div className="stat-number">{gameStats.totalWords}</div>
-              <div className="stat-label">מילים בסך הכל</div>
+              <div className="stat-label">{t.totalWords}</div>
             </div>
             <div className="stat-item">
               <div className="stat-icon">⭐</div>
               <div className="stat-number">{gameStats.gameAccuracy}%</div>
-              <div className="stat-label">דיוק כללי</div>
+              <div className="stat-label">{t.overallAccuracy}</div>
             </div>
           </div>
         </div>
 
         {/* Team Rankings */}
         <div className="rankings-card">
-          <h3 className="rankings-title">דירוג הקבוצות</h3>
+          <h3 className="rankings-title">{t.teamRankings}</h3>
           <div className="rankings-list">
             {gameStats.sortedTeams.map((team, index) => {
               const teamStat = gameStats.teamStats.find(stat => stat.id === team.id);
@@ -209,30 +220,30 @@ export default function GameSummary() {
                             ))}
                           </div>
                         ) : (
-                          <div className="no-participants">אין משתתפים</div>
+                          <div className="no-participants">{t.noParticipants}</div>
                         )}
                       </div>
                       <div className="team-details">
-                        {teamStat?.roundsPlayed} סיבובים | דיוק: {teamStat?.accuracy}%
+                        {teamStat?.roundsPlayed} {t.roundsPlayed} | {t.accuracy}: {teamStat?.accuracy}%
                       </div>
                     </div>
                     <div className="ranking-score">
                       <div className="score-number">{team.score}</div>
-                      <div className="score-label">נקודות</div>
+                      <div className="score-label">{t.points}</div>
                     </div>
                   </div>
                   
                   <div className="ranking-details">
                     <div className="detail-item">
-                      <span className="detail-label">נכונים:</span>
+                      <span className="detail-label">{t.correct}:</span>
                       <span className="detail-value">{teamStat?.totalCorrect || 0}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">דילוגים:</span>
+                      <span className="detail-label">{t.skips}:</span>
                       <span className="detail-value">{teamStat?.totalSkips || 0}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">ממוצע לסיבוב:</span>
+                      <span className="detail-label">{t.averagePerRound}:</span>
                       <span className="detail-value">{teamStat?.averageScore || 0}</span>
                     </div>
                   </div>
@@ -245,14 +256,14 @@ export default function GameSummary() {
         {/* MVP Players */}
         {mvpPlayers.length > 0 && (
           <div className="mvp-card">
-            <h3 className="mvp-title">שחקנים מצטיינים</h3>
+            <h3 className="mvp-title">{t.mvpPlayers}</h3>
             <div className="mvp-list">
               {mvpPlayers.map((player, index) => (
                 <div key={index} className="mvp-item">
                   <div className="mvp-icon">⭐</div>
                   <div className="mvp-info">
                     <div className="mvp-name">{player.name}</div>
-                    <div className="mvp-stats">דיוק: {player.accuracy}% | {player.score} נקודות</div>
+                    <div className="mvp-stats">{t.accuracy}: {player.accuracy}% | {player.score} {t.points}</div>
                   </div>
                 </div>
               ))}
@@ -263,10 +274,10 @@ export default function GameSummary() {
         {/* Action Buttons */}
         <div className="action-buttons">
           <button onClick={newGame} className="new-game-button">
-            משחק חדש
+            {t.newGame}
           </button>
           <button onClick={goHome} className="home-button">
-            חזרה לתפריט הראשי
+            {t.backToHome}
           </button>
         </div>
       </div>

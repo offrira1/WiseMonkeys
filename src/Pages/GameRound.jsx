@@ -2,10 +2,17 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Word, Team, Game } from "../Entities/index.jsx";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations } from "../data/translations";
+import LanguageToggle from "../components/LanguageToggle";
 
 export default function GameRound() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { language, isHebrew } = useLanguage();
+  const t = translations[language].gameRound;
+  const common = translations[language].common;
+  
   const gameId = searchParams.get('gameId');
   const teamId = searchParams.get('teamId');
   const doubleTime = searchParams.get('doubleTime') === 'true';
@@ -43,7 +50,7 @@ export default function GameRound() {
       const availableWords = allWords.filter(word => !currentUsedWords.includes(word.text));
       
       if (availableWords.length === 0) {
-        setCurrentWord("נגמרו המילים!");
+        setCurrentWord(t.noWordsLeft);
         return "";
       }
       
@@ -53,7 +60,7 @@ export default function GameRound() {
       return newWord;
     } catch (error) {
       console.error("Error getting next word:", error);
-      setCurrentWord("שגיאה בטעינת מילה");
+      setCurrentWord(t.errorLoadingWord);
       return "";
     }
   }, []);
@@ -67,6 +74,10 @@ export default function GameRound() {
       setTeam(teamData);
       setTimeLeft(initialTimer);
       setUsedWords(gameData.used_words || []);
+      
+      // Debug: Check current language and words
+      const gameDataInstance = (await import('../data/GameData.js')).default;
+      gameDataInstance.debugCurrentWords(language);
       
       const playerIndex = teamData.current_player_index || 0;
       const players = teamData.players;
@@ -223,15 +234,31 @@ export default function GameRound() {
     return (
       <div className="game-round-page">
         <div className="loading-container">
-          <div className="loading-text">טוען...</div>
+          <div className="loading-text">{t.loading}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="game-round-page" dir="rtl">
+    <div className="game-round-page" dir={isHebrew ? "rtl" : "ltr"}>
       <div className="game-round-container">
+        {/* Language Toggle */}
+        <div className="language-toggle-container">
+          <LanguageToggle />
+          {/* Debug button - remove this later */}
+          <button 
+            onClick={async () => {
+              const gameDataInstance = (await import('../data/GameData.js')).default;
+              gameDataInstance.debugCurrentWords(language);
+              gameDataInstance.clearAllWordData();
+              console.log('Cleared and refreshed word data');
+            }}
+            style={{marginLeft: '10px', padding: '5px', fontSize: '12px'}}
+          >
+            Debug Words
+          </button>
+        </div>
         {/* Timer */}
         <div className="timer-card">
           <div className="timer-content">
@@ -239,7 +266,7 @@ export default function GameRound() {
               <div className="timer-display">
                 {formatTime(timeLeft)}
               </div>
-              <div className="timer-label">זמן נותר</div>
+              <div className="timer-label">{t.timeRemaining}</div>
             </div>
             
             {/* Timer Controls - Only show when game is active */}
@@ -247,15 +274,15 @@ export default function GameRound() {
               <div className="timer-controls">
                 {isPaused ? (
                   <button onClick={resumeTimer} className="timer-btn resume-btn">
-                    ▶️ המשך
+{t.continue}
                   </button>
                 ) : (
                   <button onClick={pauseTimer} className="timer-btn pause-btn">
-                    ⏸️ השהה
+{t.pause}
                   </button>
                 )}
                 <button onClick={resetTimer} className="timer-btn reset-btn">
-                  🔄 אפס
+{t.reset}
                 </button>
               </div>
             )}
@@ -265,25 +292,25 @@ export default function GameRound() {
         {/* Team Info - Only show when game is not active */}
         {!isActive && (
           <div className="team-info-card">
-            <h2 className="team-title">תור קבוצת {team.name}</h2>
+            <h2 className="team-title">{t.teamTurn} {team.name}</h2>
             <div className="players-grid">
               <div className="player-role">
                 <div className="role-icon">🙈</div>
-                <div className="role-name">קוף שלא רואה</div>
+                <div className="role-name">{t.monkeyNotSee}</div>
                 <div className="player-name">{currentPlayers.guesser}</div>
-                <div className="role-desc">מנחש</div>
+                <div className="role-desc">{t.guess}</div>
               </div>
               <div className="player-role">
                 <div className="role-icon">🙉</div>
-                <div className="role-name">קוף שלא שומע</div>
+                <div className="role-name">{t.monkeyNotHear}</div>
                 <div className="player-name">{currentPlayers.clueGiver}</div>
-                <div className="role-desc">נותן רמז</div>
+                <div className="role-desc">{t.giveHint}</div>
               </div>
               <div className="player-role">
                 <div className="role-icon">🙊</div>
-                <div className="role-name">קוף שלא מדבר</div>
+                <div className="role-name">{t.monkeyNotSpeak}</div>
                 <div className="player-name">{currentPlayers.mime}</div>
-                <div className="role-desc">פנטומימה</div>
+                <div className="role-desc">{t.pantomime}</div>
               </div>
             </div>
           </div>
@@ -296,7 +323,7 @@ export default function GameRound() {
               <div className="banana-challenge-card">
                 <div className="banana-header">
                   <span className="banana-icon">🍌</span>
-                  <span className="banana-title">אתגר קלף בננה:</span>
+                  <span className="banana-title">{t.bananaChallenge}</span>
                 </div>
                 <div className="banana-content">
                   <p className="banana-text">{bananaCardText}</p>
@@ -306,10 +333,10 @@ export default function GameRound() {
 
             <div className="start-section">
               <button onClick={startRound} className="start-button">
-                התחל סיבוב!
+                {t.startRound}
               </button>
               <button onClick={finishGame} className="end-game-button">
-                סיים משחק
+                {t.finishGame}
               </button>
             </div>
           </>
@@ -320,7 +347,7 @@ export default function GameRound() {
               {/* Left Button - Correct Guess */}
               <button onClick={() => handleAction(true)} className="correct-button">
                 <span className="action-icon">✅</span>
-                <span className="action-text">ניחוש נכון</span>
+                <span className="action-text">{t.correctGuess}</span>
               </button>
 
               {/* Word Card */}
@@ -331,7 +358,7 @@ export default function GameRound() {
               {/* Right Button - Skip */}
               <button onClick={() => handleAction(false)} className="skip-button">
                 <span className="action-icon">❌</span>
-                <span className="action-text">דילוג</span>
+                <span className="action-text">{t.skip}</span>
               </button>
             </div>
 
@@ -340,7 +367,7 @@ export default function GameRound() {
               <div className="banana-challenge-card">
                 <div className="banana-header">
                   <span className="banana-icon">🍌</span>
-                  <span className="banana-title">אתגר קלף בננה:</span>
+                  <span className="banana-title">{t.bananaChallenge}</span>
                 </div>
                 <div className="banana-content">
                   <p className="banana-text">{bananaCardText}</p>
@@ -350,12 +377,12 @@ export default function GameRound() {
 
             {/* Current Score */}
             <div className="score-card">
-              <div className="score-title">ניקוד הסיבוב: {roundScore}</div>
+              <div className="score-title">{t.roundScore}: {roundScore}</div>
               <div className="score-details">
-                ניחושים נכונים: {correctGuesses} | דילוגים: {skips}
+                {common.correctGuesses}: {correctGuesses} | {common.skips}: {skips}
               </div>
               <button onClick={finishGame} className="end-game-button">
-                סיים משחק
+                {t.finishGame}
               </button>
             </div>
           </>
@@ -367,8 +394,8 @@ export default function GameRound() {
             <div className="hint-counter-overlay" onClick={() => setShowHintCounter(false)}></div>
             <div className="hint-counter-content">
               <div className="hint-counter-header">
-                <h3>כמה רמזים השתמשתם?</h3>
-                <p className="hint-counter-word">מילה: {pendingWord}</p>
+                <h3>{t.hintCounter.title}</h3>
+                <p className="hint-counter-word">{t.hintCounter.word}: {pendingWord}</p>
               </div>
               
               <div className="hint-counter-buttons">
@@ -377,8 +404,8 @@ export default function GameRound() {
                   onClick={() => handleHintSelection(1)}
                 >
                   <div className="hint-number">1</div>
-                  <div className="hint-label">רמז אחד</div>
-                  <div className="hint-points">+3 נקודות</div>
+                  <div className="hint-label">{t.hintCounter.oneHint}</div>
+                  <div className="hint-points">+3 {common.points}</div>
                 </button>
                 
                 <button 
@@ -386,8 +413,8 @@ export default function GameRound() {
                   onClick={() => handleHintSelection(2)}
                 >
                   <div className="hint-number">2</div>
-                  <div className="hint-label">שני רמזים</div>
-                  <div className="hint-points">+2 נקודות</div>
+                  <div className="hint-label">{t.hintCounter.twoHints}</div>
+                  <div className="hint-points">+2 {common.points}</div>
                 </button>
                 
                 <button 
@@ -395,8 +422,8 @@ export default function GameRound() {
                   onClick={() => handleHintSelection(3)}
                 >
                   <div className="hint-number">3</div>
-                  <div className="hint-label">שלושה רמזים</div>
-                  <div className="hint-points">+1 נקודה</div>
+                  <div className="hint-label">{t.hintCounter.threeHints}</div>
+                  <div className="hint-points">+1 {common.points}</div>
                 </button>
                 
                 <button 
@@ -404,8 +431,8 @@ export default function GameRound() {
                   onClick={() => handleHintSelection(4)}
                 >
                   <div className="hint-number">4</div>
-                  <div className="hint-label">ארבעה רמזים</div>
-                  <div className="hint-points">0 נקודות</div>
+                  <div className="hint-label">{t.hintCounter.fourHints}</div>
+                  <div className="hint-points">0 {common.points}</div>
                 </button>
               </div>
               
@@ -413,7 +440,7 @@ export default function GameRound() {
                 className="hint-cancel-button" 
                 onClick={() => setShowHintCounter(false)}
               >
-                ביטול
+                {common.cancel}
               </button>
             </div>
           </div>

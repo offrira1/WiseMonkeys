@@ -14,25 +14,28 @@ class Word {
   static async create(data) {
     const word = new Word(data);
     const gameData = (await import('../data/GameData.js')).default;
-    const words = gameData.getWords();
+    const language = localStorage.getItem('language') || 'hebrew';
+    const words = gameData.getWords(language);
     words.push(word);
-    gameData.updateWords(words);
+    gameData.updateWords(words, language);
     return word;
   }
 
   static async get(id) {
     const gameData = (await import('../data/GameData.js')).default;
-    const words = gameData.getWords();
+    const language = localStorage.getItem('language') || 'hebrew';
+    const words = gameData.getWords(language);
     return words.find(w => w.id === id) || null;
   }
 
   static async update(id, data) {
     const gameData = (await import('../data/GameData.js')).default;
-    const words = gameData.getWords();
+    const language = localStorage.getItem('language') || 'hebrew';
+    const words = gameData.getWords(language);
     const index = words.findIndex(w => w.id === id);
     if (index >= 0) {
       Object.assign(words[index], data);
-      gameData.updateWords(words);
+      gameData.updateWords(words, language);
       return words[index];
     }
     return null;
@@ -40,7 +43,9 @@ class Word {
 
   static async filter(criteria = {}) {
     const gameData = (await import('../data/GameData.js')).default;
-    const words = gameData.getWords();
+    // Get current language from localStorage or default to Hebrew
+    const language = localStorage.getItem('language') || 'hebrew';
+    const words = gameData.getWords(language);
     return words.filter(word => {
       return Object.entries(criteria).every(([key, value]) => {
         return word[key] === value;
