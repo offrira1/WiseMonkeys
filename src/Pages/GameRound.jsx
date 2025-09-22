@@ -5,6 +5,7 @@ import { Word, Team, Game } from "../Entities/index.jsx";
 import { useLanguage } from "../contexts/LanguageContext";
 import { translations } from "../data/translations";
 import LanguageToggle from "../Components/LanguageToggle";
+import soundManager from "../utils/sounds";
 
 export default function GameRound() {
   const navigate = useNavigate();
@@ -33,6 +34,12 @@ export default function GameRound() {
   const [currentPlayers, setCurrentPlayers] = useState({});
   const [showHintCounter, setShowHintCounter] = useState(false);
   const [pendingWord, setPendingWord] = useState("");
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  
+  // Sync sound manager with local state
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+  }, [soundEnabled]);
   
   // Calculate score based on number of hints used
   const calculateScore = (hintCount) => {
@@ -102,6 +109,9 @@ export default function GameRound() {
     console.log("🔄 endRound called with:", { gameId, teamId, roundScore, correctGuesses, skips });
     setIsActive(false);
     
+    // Play end sound
+    soundManager.play('end');
+    
     try {
       // Update team score and player rotation
       console.log("📊 Updating team score...");
@@ -143,9 +153,19 @@ export default function GameRound() {
     let interval = null;
     if (isActive && !isPaused && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft(t => t - 1);
+        setTimeLeft(t => {
+          if (t <= 1) {
+            // Play time up sound before ending round
+            soundManager.play('timeUp');
+            endRound();
+            return 0;
+          }
+          return t - 1;
+        });
       }, 1000);
     } else if (isActive && timeLeft === 0) {
+      // Play time up sound if timer reaches 0
+      soundManager.play('timeUp');
       endRound();
     }
     return () => clearInterval(interval);
@@ -159,6 +179,9 @@ export default function GameRound() {
         setPendingWord(wordToMarkAsUsed);
         setShowHintCounter(true);
     } else {
+        // Play skip sound
+        soundManager.play('skip');
+        
         // Track skipped word
         const newSkippedWords = [...skippedWords, { text: wordToMarkAsUsed, score: -1 }];
         setSkippedWords(newSkippedWords);
@@ -172,6 +195,9 @@ export default function GameRound() {
     const score = calculateScore(hintCount);
     setRoundScore(s => s + score);
     setCorrectGuesses(c => c + 1);
+    
+    // Play correct guess sound
+    soundManager.play('correct');
     
     // Track the word with hint information
     const wordWithHints = {
@@ -190,6 +216,8 @@ export default function GameRound() {
   const startRound = () => {
     setIsActive(true);
     setIsPaused(false);
+    // Play start sound
+    soundManager.play('start');
   };
 
   const pauseTimer = () => {
@@ -258,10 +286,26 @@ export default function GameRound() {
   return (
     <div className="game-round-page" dir={isHebrew ? "rtl" : "ltr"}>
       <div className="game-round-container">
-        {/* Language Toggle */}
-        <div className="language-toggle-container">
-          <LanguageToggle />
-          {/* Debug button - remove this later */}
+        {/* Language Toggle and Sound Toggle */}
+        <div className="controls-container">
+          <div className="language-toggle-container">
+            <LanguageToggle />
+          </div>
+          <div className="sound-toggle-container">
+            <button
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className={`sound-toggle ${soundEnabled ? 'enabled' : 'disabled'}`}
+              title={soundEnabled ? t.soundOff : t.soundOn}
+            >
+              <span className="sound-icon">
+                {soundEnabled ? '🔊' : '🔇'}
+              </span>
+            </button>
+          </div>
+        </div>
+        
+        {/* Debug button - remove this later */}
+        <div style={{textAlign: 'center', margin: '10px 0'}}>
           <button 
             onClick={async () => {
               const gameDataInstance = (await import('../data/GameData.js')).default;

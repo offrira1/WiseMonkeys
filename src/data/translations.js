@@ -216,7 +216,9 @@ export const translations = {
       guess: "מנחש",
       giveHint: "נותן רמז",
       pantomime: "פנטומימה",
-      bananaChallenge: "אתגר קלף בננה:"
+      bananaChallenge: "אתגר קלף בננה:",
+      soundOn: "הפעל צלילים",
+      soundOff: "כבה צלילים"
     },
 
     // Game Summary
@@ -535,7 +537,9 @@ export const translations = {
       guess: "Guesses",
       giveHint: "Gives hint",
       pantomime: "Pantomime",
-      bananaChallenge: "Banana Card Challenge:"
+      bananaChallenge: "Banana Card Challenge:",
+      soundOn: "Enable Sounds",
+      soundOff: "Disable Sounds"
     },
 
     // Game Summary
