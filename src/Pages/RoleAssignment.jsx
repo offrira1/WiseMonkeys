@@ -5,7 +5,7 @@ import { Game, Team } from "../Entities/index.jsx";
 import GameData from "../data/GameData.js";
 import { useLanguage } from "../contexts/LanguageContext";
 import { translations } from "../data/translations";
-import LanguageToggle from "../components/LanguageToggle";
+import LanguageToggle from "../Components/LanguageToggle";
 
 export default function RoleAssignment() {
   const navigate = useNavigate();

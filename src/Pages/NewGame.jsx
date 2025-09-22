@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { Game, Team } from "../Entities/index.jsx";
 import { useLanguage } from "../contexts/LanguageContext";
 import { translations } from "../data/translations";
-import LanguageToggle from "../components/LanguageToggle";
+import LanguageToggle from "../Components/LanguageToggle";
 
 export default function NewGame() {
   const navigate = useNavigate();

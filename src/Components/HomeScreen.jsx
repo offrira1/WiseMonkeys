@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { useLanguage } from "../contexts/LanguageContext";
 import { translations } from "../data/translations";
-import LanguageToggle from "../components/LanguageToggle";
+import LanguageToggle from "./LanguageToggle";
 
 export default function HomeScreen() {
   const { language, isHebrew } = useLanguage();
