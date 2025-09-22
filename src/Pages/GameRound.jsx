@@ -23,7 +23,20 @@ export default function GameRound() {
   const [game, setGame] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
   const [currentPlayers, setCurrentPlayers] = useState({});
+  const [showHintCounter, setShowHintCounter] = useState(false);
+  const [pendingWord, setPendingWord] = useState("");
   
+  // Calculate score based on number of hints used
+  const calculateScore = (hintCount) => {
+    switch (hintCount) {
+      case 1: return 3; // 3+ steps
+      case 2: return 2; // 2+ steps  
+      case 3: return 1; // 1+ step
+      case 4: return 0; // 0 steps
+      default: return 0;
+    }
+  };
+
   const getNextWord = useCallback(async (currentUsedWords) => {
     try {
       const allWords = await Word.filter({ is_active: true, difficulty: "easy" });
@@ -129,14 +142,23 @@ export default function GameRound() {
     setUsedWords(newUsedWords);
     
     if (isCorrect) {
-        setRoundScore(s => s + 1);
-        setCorrectGuesses(c => c + 1);
+        // Show hint counter modal for correct guesses
+        setPendingWord(wordToMarkAsUsed);
+        setShowHintCounter(true);
     } else {
         setRoundScore(s => s - 1);
         setSkips(s => s + 1);
+        await getNextWord(newUsedWords);
     }
-    
-    await getNextWord(newUsedWords);
+  };
+
+  const handleHintSelection = async (hintCount) => {
+    const score = calculateScore(hintCount);
+    setRoundScore(s => s + score);
+    setCorrectGuesses(c => c + 1);
+    setShowHintCounter(false);
+    setPendingWord("");
+    await getNextWord(usedWords);
   };
 
   const startRound = () => {
@@ -337,6 +359,64 @@ export default function GameRound() {
               </button>
             </div>
           </>
+        )}
+
+        {/* Hint Counter Modal */}
+        {showHintCounter && (
+          <div className="hint-counter-modal">
+            <div className="hint-counter-overlay" onClick={() => setShowHintCounter(false)}></div>
+            <div className="hint-counter-content">
+              <div className="hint-counter-header">
+                <h3>כמה רמזים השתמשתם?</h3>
+                <p className="hint-counter-word">מילה: {pendingWord}</p>
+              </div>
+              
+              <div className="hint-counter-buttons">
+                <button 
+                  className="hint-button hint-1" 
+                  onClick={() => handleHintSelection(1)}
+                >
+                  <div className="hint-number">1</div>
+                  <div className="hint-label">רמז אחד</div>
+                  <div className="hint-points">+3 נקודות</div>
+                </button>
+                
+                <button 
+                  className="hint-button hint-2" 
+                  onClick={() => handleHintSelection(2)}
+                >
+                  <div className="hint-number">2</div>
+                  <div className="hint-label">שני רמזים</div>
+                  <div className="hint-points">+2 נקודות</div>
+                </button>
+                
+                <button 
+                  className="hint-button hint-3" 
+                  onClick={() => handleHintSelection(3)}
+                >
+                  <div className="hint-number">3</div>
+                  <div className="hint-label">שלושה רמזים</div>
+                  <div className="hint-points">+1 נקודה</div>
+                </button>
+                
+                <button 
+                  className="hint-button hint-4" 
+                  onClick={() => handleHintSelection(4)}
+                >
+                  <div className="hint-number">4</div>
+                  <div className="hint-label">ארבעה רמזים</div>
+                  <div className="hint-points">0 נקודות</div>
+                </button>
+              </div>
+              
+              <button 
+                className="hint-cancel-button" 
+                onClick={() => setShowHintCounter(false)}
+              >
+                ביטול
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

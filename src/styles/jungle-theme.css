@@ -5495,3 +5495,209 @@ body {
   }
 }
 
+/* Hint Counter Modal Styles */
+.hint-counter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  direction: rtl;
+}
+
+.hint-counter-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.hint-counter-content {
+  position: relative;
+  background: var(--jungle-primary);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--glass-border);
+  text-align: center;
+}
+
+.hint-counter-header {
+  margin-bottom: 30px;
+}
+
+.hint-counter-header h3 {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hint-counter-word {
+  color: var(--text-accent);
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: var(--glass);
+  padding: 10px 20px;
+  border-radius: 15px;
+  border: 1px solid var(--glass-border);
+  margin: 0;
+}
+
+.hint-counter-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.hint-button {
+  background: var(--jungle-secondary);
+  border: 2px solid var(--glass-border);
+  border-radius: 15px;
+  padding: 20px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 120px;
+  justify-content: center;
+}
+
+.hint-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: var(--text-accent);
+}
+
+.hint-button:active {
+  transform: translateY(-1px);
+}
+
+.hint-number {
+  background: var(--text-accent);
+  color: var(--text-dark);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hint-label {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.hint-points {
+  color: var(--text-accent);
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: var(--glass);
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+}
+
+/* Specific hint button colors */
+.hint-1 {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.hint-2 {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.hint-3 {
+  background: linear-gradient(135deg, #34d399 0%, #6ee7b7 100%);
+}
+
+.hint-4 {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.hint-cancel-button {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 12px 30px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.hint-cancel-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--text-accent);
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hint-counter-content {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .hint-counter-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .hint-counter-word {
+    font-size: 1rem;
+  }
+  
+  .hint-button {
+    padding: 15px 10px;
+    min-height: 100px;
+  }
+  
+  .hint-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+  }
+  
+  .hint-label {
+    font-size: 0.9rem;
+  }
+  
+  .hint-points {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hint-counter-buttons {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .hint-button {
+    min-height: 80px;
+    padding: 12px 8px;
+  }
+}
+

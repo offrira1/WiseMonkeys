@@ -9,7 +9,7 @@ export default function HomeScreen() {
   
   const content = {
     hebrew: {
-      title: "שלושת הקופים",
+      title: "ניקוקוד - NikkoCode",
       subtitle: "משחק מהנה ומרגש שמחבר בין חברים ומשפחה עם אתגרים יצירתיים ורגעי צחוק בלתי נגמרים",
       newGame: "משחק חדש",
       instructions: "הוראות המשחק",
@@ -32,7 +32,7 @@ export default function HomeScreen() {
       }
     },
     english: {
-      title: "Three Monkeys",
+      title: "KofiCode",
       subtitle: "A fun and exciting game that connects friends and family with creative challenges and endless laughter",
       newGame: "New Game",
       instructions: "Game Instructions",
@@ -229,15 +229,15 @@ export default function HomeScreen() {
           
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-number">3-12</div>
+              <div className="stat-number">3+</div>
               <div className="stat-label">{isHebrew ? 'שחקנים' : 'Players'}</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">15-45</div>
+              <div className="stat-number">15-60</div>
               <div className="stat-label">{isHebrew ? 'דקות' : 'Minutes'}</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">300+</div>
+              <div className="stat-number">600+</div>
               <div className="stat-label">{isHebrew ? 'מילים' : 'Words'}</div>
             </div>
             <div className="stat-item">

@@ -45,33 +45,117 @@ export default function Instructions() {
           </div>
         </div>
 
-        {/* Game Cards */}
-        <div className="game-card">
-          <div className="game-card-content">
-            <div className="instructions-section">
-              <div className="section-title">
-                🃏 קלפי המשחק
+{/* Game Cards */}
+<div className="game-card">
+  <div className="game-card-content">
+    <div className="instructions-section">
+      <div className="section-title">🃏 קלפי המילים</div>
+      <div className="instruction-text">
+        <p><strong>בכל קלף מילים מופיעה מילה • בכל תור מנסים להצליח כמה שיותר קלפים בזמן הנתון</strong></p>
+        
+        <div className="scoring-system" style={{marginTop: '20px'}}>
+          <div className="scoring-title" style={{textAlign: 'center', marginBottom: '15px', fontWeight: 'bold', color: '#333'}}>
+            🎯 מערכת הניקוד
+          </div>
+          
+          {/* Success Cases */}
+          <div className="success-section" style={{backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '10px', marginBottom: '15px', border: '1px solid #bfdbfe'}}>
+            <div className="section-header" style={{fontWeight: 'bold', color: '#065f46', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', direction: 'rtl'}}>
+              <span>הצלחה בניחוש</span>
+              <span style={{backgroundColor: '#059669', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'}}>✓</span>
+            </div>
+            
+            <div className="scoring-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', direction: 'rtl'}}>
+              <div className="scoring-item" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #d1fae5', textAlign: 'center'}}>
+                <div className="scoring-icon" style={{backgroundColor: '#059669', color: 'white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', marginBottom: '8px'}}>1</div>
+                <div className="scoring-label" style={{fontSize: '14px', marginBottom: '4px'}}>רמז אחד</div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                  <div className="scoring-points" style={{fontSize: '18px', fontWeight: 'bold', color: '#059669'}}>3+</div>
+                  <span style={{fontSize: '12px', color: '#666'}}>צעדים</span>
+                </div>
               </div>
-              <div className="instruction-text">
-                <p><strong>בכל קלף מילים מופיעות 6 מילים שונות.</strong></p>
-                <p><strong>בכל תור עוברים על כמה קלפים שמספיקים בזמן.</strong></p>
-                
-                <div className="scoring-grid" style={{marginTop: '15px'}}>
-                  <div className="scoring-item">
-                    <div className="scoring-icon">✅</div>
-                    <div className="scoring-points correct-points">+1</div>
-                    <div className="scoring-label">תשובה נכונה = הקבוצה מתקדמת צעד בלוח</div>
-                  </div>
-                  <div className="scoring-item">
-                    <div className="scoring-icon">❌</div>
-                    <div className="scoring-points skip-points">-1</div>
-                    <div className="scoring-label">תשובה שגויה או רמז לא חוקי = הקלף נפסל והקבוצה חוזרת צעד אחורה</div>
-                  </div>
+              
+              <div className="scoring-item" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #d1fae5', textAlign: 'center'}}>
+                <div className="scoring-icon" style={{backgroundColor: '#10b981', color: 'white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', marginBottom: '8px'}}>2</div>
+                <div className="scoring-label" style={{fontSize: '14px', marginBottom: '4px'}}>שני רמזים</div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                  <div className="scoring-points" style={{fontSize: '18px', fontWeight: 'bold', color: '#10b981'}}>2+</div>
+                  <span style={{fontSize: '12px', color: '#666'}}>צעדים</span>
+                </div>
+              </div>
+              
+              <div className="scoring-item" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #d1fae5', textAlign: 'center'}}>
+                <div className="scoring-icon" style={{backgroundColor: '#34d399', color: 'white', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', marginBottom: '8px'}}>3</div>
+                <div className="scoring-label" style={{fontSize: '14px', marginBottom: '4px'}}>שלושה רמזים</div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                  <div className="scoring-points" style={{fontSize: '18px', fontWeight: 'bold', color: '#34d399'}}>1+</div>
+                  <span style={{fontSize: '12px', color: '#666'}}>צעד</span>
                 </div>
               </div>
             </div>
           </div>
+          
+          {/* Neutral Case */}
+          <div className="neutral-section" style={{backgroundColor: '#fffbeb', padding: '15px', borderRadius: '10px', marginBottom: '15px', border: '1px solid #fed7aa'}}>
+            <div className="scoring-item" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #fde68a', direction: 'rtl'}}>
+              <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                <div className="scoring-label">ארבעה רמזים</div>
+                <div className="scoring-icon" style={{backgroundColor: '#f59e0b', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px'}}>4</div>
+              </div>
+              <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                <span style={{fontSize: '12px', color: '#666'}}>הקבוצה לא מתקדמת</span>
+                <div className="scoring-points" style={{fontSize: '20px', fontWeight: 'bold', color: '#f59e0b'}}>0</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Failure Cases */}
+          <div className="failure-section" style={{backgroundColor: '#fef2f2', padding: '15px', borderRadius: '10px', marginBottom: '15px', border: '1px solid #fecaca'}}>
+            <div className="section-header" style={{fontWeight: 'bold', color: '#dc2626', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', direction: 'rtl'}}>
+              <span>כישלון או דילוג</span>
+              <span style={{backgroundColor: '#dc2626', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'}}>✗</span>
+            </div>
+            
+            <div className="scoring-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', direction: 'rtl'}}>
+              <div className="scoring-item" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca', direction: 'rtl'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                  <div className="scoring-label">חמישה רמזים</div>
+                  <div className="scoring-icon" style={{backgroundColor: '#ef4444', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px'}}>5</div>
+                </div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                  <span style={{fontSize: '12px', color: '#666'}}>צעד אחורה</span>
+                  <div className="scoring-points" style={{fontSize: '20px', fontWeight: 'bold', color: '#ef4444'}}>1-</div>
+                </div>
+              </div>
+              
+              <div className="scoring-item" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca', direction: 'rtl'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                  <div className="scoring-label">דילוג על קלף</div>
+                  <div className="scoring-icon" style={{backgroundColor: '#dc2626', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px'}}>⏭</div>
+                </div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                  <span style={{fontSize: '12px', color: '#666'}}>צעד אחורה</span>
+                  <div className="scoring-points" style={{fontSize: '20px', fontWeight: 'bold', color: '#dc2626'}}>1-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Quick Tip */}
+          <div className="tip-section" style={{backgroundColor: '#f9fafb', padding: '15px', borderRadius: '10px', border: '1px solid #e5e7eb', direction: 'rtl'}}>
+            <div style={{fontWeight: 'bold', color: '#374151', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <span>זכרו:</span>
+              <span>💡</span>
+            </div>
+            <p style={{fontSize: '14px', color: '#6b7280', margin: '0'}}>
+              ככל שתשתמשו ברמזים פחות, תקבלו יותר נקודות! המטרה היא לתת רמזים יעילים ומדויקים.
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
 
         {/* Roles Explanation */}
         <div className="game-card">
@@ -211,18 +295,24 @@ export default function Instructions() {
                 <p>🙊 הקוף שלא מדבר - מנגן עם ידיים.</p>
                 <p>🙉 הקוף שלא שומע - אומר "מיתרים".</p>
                 <p>🙈 הקוף שלא רואה - אומר "גיטרה".</p>
+                <p>הקבוצה זכתה ב-3 צעדים כי הקוף שלא רואה ניחש בעזרת רמז אחד בלבד.</p>
                 
                 <p><strong>קלף: "מטרייה"</strong></p>
                 <p>🙊 הקוף שלא מדבר - עושה פנטומימה - נראה יותר כמו "מקל הליכה".</p>
                 <p>🙉 הקוף שלא שומע - אומר "זקן".</p>
                 <p>🙈 הקוף שלא רואה - מתחיל לנחש "סבא… מקל…" ולא מתקרב בכלל.</p>
-                <p>🙊 הקוף שלא מדבר מבין שזה לא הולך, מוותר ומסמן לדלג. הקלף נפסל, הקבוצה חוזרת צעד אחורה.</p>
+                <p>🙊 הקוף שלא מדבר - עושה פנטומימה סימון של "לא" ומדמה אדם שפותח מטרייה והולך בגשם.</p>
+                <p>🙉 הקוף שלא שומע - מבין ואומר "זלעפות".</p>
+                <p>🙊 הקוף שלא מדבר - אומר "גשם...סופה..רעמים".</p>
+                <p>🙉 הקוף שלא שומע - מוסיף ואומר "מגן".</p>
+                <p>🙊 הקוף שלא מדבר - אומר "מטרייה".</p>
+                <p>הקבוצה זכתה בצעד אחד בלבד כי השתמשו ב-3 רמזים.</p>
                 
                 <p><strong>קלף: "מקרר"</strong></p>
                 <p>🙊 הקוף שלא מדבר - עושה פנטומימה של פתיחת דלת ולקיחת משהו.</p>
                 <p>🙉 הקוף שלא שומע - מתלהב מדי ואומר ישירות: "מקרר!"</p>
                 <p>🙈 הקוף שלא רואה - כמובן חוזר על זה: "מקרר!".</p>
-                <p>מכיוון שהחירש אמר את התשובה עצמה (רמז אסור) הקלף נפסל, הקבוצה חוזרת צעד אחורה.</p>
+                <p>מכיוון שהקוף שלא שומע אמר את התשובה עצמה (רמז אסור) הקלף נפסל, הקבוצה חוזרת צעד אחורה.</p>
               </div>
             </div>
           </div>
